@@ -1,0 +1,79 @@
+{
+  "personal": {
+    "name": "Yuvaraj Misal",
+    "title": "Software Engineer",
+    "subtitle": "ReactJs, NextJs, and WordPress (Theme Development)",
+    "email": "misalyuvi@gmail.com",
+    "location": "pune",
+    "phone": "8308877559",
+    "bio": "Hey there! I'm Yuvaraj Misal, a Software Engineer fresher, specializing in Html,Css, Javascript, TypeScript, Expressjs, NextJs, and NodeJs, MonGoDb (Theme Development).",
+    "about": "I'm passionate about building user-friendly interfaces and web experiences. I started my web development journey by crafting websites with the fundamentals of HTML, CSS, and JS. I've worked at Axioned as a Software Engineer and at Mastek as a Senior ReactJS Developer, creating scalable and high-performance web applications. I also know TypeScript, Prisma, GA/GTM and Shopify. I'm constantly exploring new tools and libraries to stay ahead of the curve.",
+    "openToOpportunity": true
+  },
+  "social": {
+    "github": "https://github.com/misalyuvaraj",
+    "linkedin": "https://www.linkedin.com/in/yuvaraj-misal-a8a1142b2",
+    "twitter": "https://twitter.com/yuvi_9991",
+    "instagram": "https://instagram.com/yuvarajmisal1896",
+    "youtube": "",
+    "portfolio": "https://yuvarajmsal.vercel.app/",
+    "naukri": "https://www.naukri.com/"
+  },
+  "skillsOverview": [
+    "ReactJs",
+    "React Native",
+    "NodeJs",
+    "Expressjs",
+    "NextJs",
+    "Html",
+    "Css",
+    "Javascript",
+    "Typescript",
+    "Tailwind"
+  ],
+  "analytics": [
+    "Google Analytics",
+    "Google Tag Manager",
+    "Hotjar",
+    "Hubspot"
+  ],
+  "tools": [
+    "Postman",
+    "deployment",
+    "Vs Code",
+    "Trello",
+    "Git & GitHub"
+  ],
+  "privacy": {
+    "cookiesMessage": "This website uses cookies to ensure you get the best experience on our website.",
+    "cta": "Got It"
+  },
+  "services": [
+    {
+      "id": 1,
+      "title": "React / Next.js Development",
+      "description": "Building fast, scalable, and SEO-friendly web applications with React and Next.js.",
+      "icon": "⚛️",
+      "features": [
+        "Modern component architecture",
+        "Server-side rendering (Next.js)",
+        "Performance and accessibility",
+        "Responsive UI with Tailwind/SASS"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "WordPress Theme Development",
+      "description": "Custom WordPress themes with ACF, optimized for speed and editorial experience.",
+      "icon": "📝",
+      "features": [
+        "Custom theme development",
+        "Advanced Custom Fields (ACF)",
+        "Headless WordPress setups",
+        "Gutenberg blocks"
+      ]
+    }
+  ]
+}
+
+
