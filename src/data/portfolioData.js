@@ -16,8 +16,7 @@ export const portfolioData = {
     twitter: "https://twitter.com/yuvi_9991",
     instagram: "https://instagram.com/yuvarajmisal1896",
     youtube: "",
-    portfolio: "https://yuvaraj.dev",
-    naukri: "https://www.naukri.com/"
+    portfolio: "https://yuvaraj.dev"
   },
 
   skills: {
@@ -114,7 +113,7 @@ export const portfolioData = {
       technologies: ["Next.js", "TypeScript", "OpenAI API", "Tailwind CSS", "Electron js","HTML","Css","Javascript"]
     },
     {
-      id: 3,
+      id: 2,
       title: "Billing App ",
       description: "A decentralized application for tracking products through the supply chain using blockchain technology, ensuring transparency and authenticity.",
       longDescription: "Built a blockchain-based supply chain tracking system that provides end-to-end visibility of products. Uses smart contracts for automated verification and immutable record keeping.",
@@ -133,7 +132,7 @@ export const portfolioData = {
       technologies: ["React", "Solidity", "Web3.js", "Ethereum", "Hardhat", "IPFS"]
     },
     {
-      id: 5,
+      id: 3,
       title: "Jay Protfolio",
       description: "A centralized hub for controlling smart home devices, monitoring sensors, and automating daily routines with voice commands and mobile app control.",
       longDescription: "Developed an IoT home automation system that integrates various smart devices and sensors. Includes voice control, mobile app, and automated routines based on user preferences.",
@@ -166,7 +165,7 @@ export const portfolioData = {
     },
 
     {
-      id: 4,
+      id: 2,
       name: "Blind Coding Certification",
       issuer: "Foundation",
       date: "September 2023",
@@ -176,7 +175,7 @@ export const portfolioData = {
       skills: ["Python", "Java", "JavaScript", "Ruby"]
     },
     {
-      id: 5,
+      id: 3,
       name: "React Developer Certification",
       issuer: "Ui/Ux Design",
       date: "Oct 2023",

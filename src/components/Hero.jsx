@@ -3,7 +3,6 @@ import { FaGithub, FaLinkedin, FaEnvelope, FaInstagram, FaBriefcase } from 'reac
 import { FaXTwitter } from 'react-icons/fa6';
 import profileImg from '../assets/profile.png';
 import { usePortfolio } from '../context/PortfolioContext';
-import NaukriIcon from './icons/NaukriIcon';
 
 const Hero = () => {
   const { data, loading } = usePortfolio();
@@ -15,7 +14,6 @@ const Hero = () => {
     { icon: <FaLinkedin size={20} />, url: social.linkedin, label: 'LinkedIn' },
     { icon: <FaXTwitter size={20} />, url: social.twitter, label: 'Twitter' },
     { icon: <FaInstagram size={20} />, url: social.instagram, label: 'Instagram' },
-    { icon: <NaukriIcon size={20} />, url: social.naukri, label: 'Naukri' },
     { icon: <FaEnvelope size={20} />, url: `mailto:${personal.email}`, label: 'Email' },
   ];
 

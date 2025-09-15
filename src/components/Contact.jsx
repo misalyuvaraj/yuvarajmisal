@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaClock, FaLinkedin, FaGithub, FaInstagram } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { portfolioData } from '../data/portfolioData';
-import NaukriIcon from './icons/NaukriIcon';
 
 const Contact = () => {
   const { personal, social, contact, stats } = portfolioData;
@@ -74,8 +73,7 @@ const Contact = () => {
     { icon: <FaLinkedin />, url: social.linkedin, label: 'LinkedIn', color: 'hover:text-blue-600' },
     { icon: <FaGithub />, url: social.github, label: 'GitHub', color: 'hover:text-gray-600' },
     { icon: <FaXTwitter />, url: social.twitter, label: 'Twitter', color: 'hover:text-blue-400' },
-    { icon: <FaInstagram />, url: social.instagram, label: 'Instagram', color: 'hover:text-pink-600' },
-    { icon: <NaukriIcon />, url: social.naukri, label: 'Naukri', color: 'hover:text-blue-600' }
+    { icon: <FaInstagram />, url: social.instagram, label: 'Instagram', color: 'hover:text-pink-600' }
   ];
 
   return (

@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { FaGithub, FaLinkedin, FaInstagram, FaHeart } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { portfolioData } from '../data/portfolioData';
-import NaukriIcon from './icons/NaukriIcon';
 
 const Footer = () => {
   const { personal, social } = portfolioData;
@@ -14,27 +13,40 @@ const Footer = () => {
   const [visitsLoading, setVisitsLoading] = useState(true);
 
   useEffect(() => {
-    // Use CountAPI to increment and fetch visit count
-    // Namespace/key can be anything; using domain-like key for uniqueness
+    // Increment and fetch visit count with fallback providers
     const namespace = 'yuvaraj-portfolio';
     const key = 'site-visits-total';
-    fetch(`https://api.countapi.dev/hit/${namespace}/${key}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (typeof data?.value === 'number') setVisits(data.value);
-      })
-      .catch(() => {
-        // Fallback: do nothing on error
-      })
-      .finally(() => setVisitsLoading(false));
+
+    const providers = [
+      // Primary: official CountAPI (.xyz)
+      `https://api.countapi.xyz/hit/${namespace}/${key}`,
+      // Fallback: alternative domain (.dev)
+      `https://api.countapi.dev/hit/${namespace}/${key}`
+    ];
+
+    (async () => {
+      for (const url of providers) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) continue;
+          const data = await response.json();
+          if (typeof data?.value === 'number') {
+            setVisits(data.value);
+            break;
+          }
+        } catch (_) {
+          // try next provider
+        }
+      }
+      setVisitsLoading(false);
+    })();
   }, []);
 
   const socialLinks = [
     { icon: <FaGithub />, url: social.github, label: 'GitHub' },
     { icon: <FaLinkedin />, url: social.linkedin, label: 'LinkedIn' },
     { icon: <FaXTwitter />, url: social.twitter, label: 'Twitter' },
-    { icon: <FaInstagram />, url: social.instagram, label: 'Instagram' },
-    { icon: <NaukriIcon />, url: social.naukri, label: 'Naukri' }
+    { icon: <FaInstagram />, url: social.instagram, label: 'Instagram' }
   ];
 
   const quickLinks = [
@@ -171,7 +183,7 @@ const Footer = () => {
               className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors duration-300 font-medium"
               title="Total site visits"
             >
-              {visitsLoading ? 'Visits: ...' : `Visits: ${visits ?? '1'}`}
+              {visitsLoading ? 'Visits: ...' : `Visits: ${visits ?? '0'}`}
             </button>
           </div>
         </motion.div>
