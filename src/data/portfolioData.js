@@ -96,25 +96,6 @@ export const portfolioData = {
   projects: [
     {
       id: 1,
-      title: "Supermarket POS System",
-      description: "A comprehensive Point of Sale system with barcode scanning, inventory management, and real-time reporting. Features include user authentication, sales tracking, and analytics dashboard.",
-      longDescription: "Built a full-stack POS system that handles daily operations for retail businesses. Includes barcode scanning, inventory management, sales reporting, and customer management. The system processes thousands of transactions daily with 99.9% uptime.",
-      tags: ["React", "Node.js", "MongoDB", "Express", "Barcode Scanner", "Real-time Updates"],
-      github: "https://github.com/yuvarajmisal/pos-system",
-      demo: "https://pos-system-demo.vercel.app",
-      image: "posImg",
-      features: [
-        "Barcode scanning and product lookup",
-        "Real-time inventory management",
-        "Sales reporting and analytics",
-        "Customer management system",
-        "Multi-user authentication",
-        "Offline capability with sync"
-      ],
-      technologies: ["React", "Node.js", "MongoDB", "Express", "Socket.io", "JWT"]
-    },
-    {
-      id: 2,
       title: "AI-Powered Portfolio Builder",
       description: "An intelligent portfolio generator that uses AI to suggest content, layouts, and design elements based on user preferences and industry standards.",
       longDescription: "Developed an AI-driven portfolio builder that analyzes user input and generates personalized portfolio suggestions. Includes template customization, content optimization, and SEO recommendations.",
@@ -134,11 +115,11 @@ export const portfolioData = {
     },
     {
       id: 3,
-      title: "Blockchain Supply Chain Tracker",
+      title: "Billing App ",
       description: "A decentralized application for tracking products through the supply chain using blockchain technology, ensuring transparency and authenticity.",
       longDescription: "Built a blockchain-based supply chain tracking system that provides end-to-end visibility of products. Uses smart contracts for automated verification and immutable record keeping.",
       tags: ["Web3", "Blockchain", "Solidity", "Ethereum", "React", "MetaMask"],
-      github: "https://github.com/yuvarajmisal/blockchain-tracker",
+      github: "https://github.com/vaibhavbhagare/electrobill",
       demo: "https://supply-chain-tracker.vercel.app",
       image: "utilsImg",
       features: [
@@ -150,25 +131,6 @@ export const portfolioData = {
         "Audit trail generation"
       ],
       technologies: ["React", "Solidity", "Web3.js", "Ethereum", "Hardhat", "IPFS"]
-    },
-    {
-      id: 4,
-      title: "Machine Learning Dashboard",
-      description: "An interactive dashboard for visualizing machine learning models, data analysis, and predictive analytics with real-time data processing.",
-      longDescription: "Created a comprehensive ML dashboard that displays model performance, data visualizations, and predictive insights. Includes real-time data processing and interactive charts.",
-      tags: ["Python", "Machine Learning", "React", "TensorFlow", "Data Visualization"],
-      github: "https://github.com/yuvarajmisal/ml-dashboard",
-      demo: "https://ml-dashboard.vercel.app",
-      image: "invoiceImg",
-      features: [
-        "Real-time data processing",
-        "Interactive visualizations",
-        "Model performance metrics",
-        "Predictive analytics",
-        "Data export capabilities",
-        "Custom model training"
-      ],
-      technologies: ["Python", "React", "TensorFlow", "Pandas", "Plotly", "FastAPI"]
     },
     {
       id: 5,
@@ -250,22 +212,6 @@ export const portfolioData = {
       description: "Recognized for significant contributions to popular open-source projects.",
       category: "Community"
     },
-    {
-      id: 4,
-      title: "Speaker at ReactConf 2023",
-      issuer: "React Community",
-      date: "September 2023",
-      description: "Presented on 'Advanced React Patterns for Enterprise Applications'.",
-      category: "Speaking"
-    },
-    {
-      id: 5,
-      title: "Mentorship Excellence Award",
-      issuer: "Developer Community",
-      date: "August 2023",
-      description: "Recognized for outstanding mentorship and knowledge sharing in the developer community.",
-      category: "Leadership"
-    }
   ],
 
   education: [
