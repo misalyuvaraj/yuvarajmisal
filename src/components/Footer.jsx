@@ -205,34 +205,6 @@ const Footer = () => {
               {visitsLoading ? 'Visits: ...' : `Visits: ${visits ?? '0'}`}
               {justIncremented && ' 🎉'}
             </button>
-            <button
-              onClick={() => {
-                // Simulate a new visit
-                const currentVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
-                const newVisits = currentVisits + 1;
-                localStorage.setItem('portfolio-visits', newVisits.toString());
-                setVisits(newVisits);
-                setJustIncremented(true);
-                setTimeout(() => setJustIncremented(false), 2000);
-                console.log('🧪 Manual increment! New count:', newVisits);
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 font-medium text-sm"
-              title="Test increment (for testing)"
-            >
-              Test +1
-            </button>
-            <button
-              onClick={() => {
-                localStorage.removeItem('portfolio-visits');
-                sessionStorage.removeItem('portfolio-visit-tracked');
-                setVisits(0);
-                console.log('Visit counter reset!');
-              }}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 font-medium text-sm"
-              title="Reset visit counter (for testing)"
-            >
-              Reset
-            </button>
           </div>
         </motion.div>
       </div>
