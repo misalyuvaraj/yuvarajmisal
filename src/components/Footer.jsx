@@ -14,13 +14,17 @@ const Footer = () => {
 
   useEffect(() => {
     const trackVisit = async () => {
+      // Use a completely fresh, unique counter for all devices
+      const namespace = 'yuvaraj-misal-2024';
+      const key = 'portfolio-visits';
       const sessionKey = 'portfolio-visit-tracked';
-      // Use a single, fixed namespace and key for all devices
-      const namespace = 'yuvaraj-misal-portfolio';
-      const key = 'total-visits';
       
       // Check if this session has already been tracked
       const hasTrackedVisit = sessionStorage.getItem(sessionKey);
+      
+      console.log('🔍 Device type:', /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'Mobile' : 'Desktop');
+      console.log('🔍 Session tracked?', hasTrackedVisit);
+      console.log('🌐 Using counter:', `${namespace}/${key}`);
       
       try {
         if (!hasTrackedVisit) {
@@ -232,6 +236,19 @@ const Footer = () => {
               title="Total site visits"
             >
               {visitsLoading ? 'Visits: ...' : `Visits: ${visits ?? '0'}`}
+            </button>
+            <button
+              onClick={() => {
+                // Clear session to test counter
+                sessionStorage.removeItem('portfolio-visit-tracked');
+                localStorage.removeItem('portfolio-visits');
+                console.log('🔄 Session cleared - next visit will increment counter');
+                alert('Session cleared! Next visit will increment counter.');
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 font-medium text-sm"
+              title="Clear session for testing"
+            >
+              Test
             </button>
           </div>
         </motion.div>
