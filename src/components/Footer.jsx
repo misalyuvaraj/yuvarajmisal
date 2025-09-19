@@ -16,56 +16,28 @@ const Footer = () => {
   useEffect(() => {
     const trackVisit = async () => {
       const sessionKey = 'portfolio-visit-tracked';
-      const namespace = 'yuvaraj-portfolio-global';
-      const key = 'total-visits';
+      const namespace = 'yuvaraj-portfolio';
+      const key = 'global-visits';
       
       // Check if this session has already been tracked
       const hasTrackedVisit = sessionStorage.getItem(sessionKey);
       
-      console.log('🔍 Session tracked?', hasTrackedVisit);
-      
       try {
         if (!hasTrackedVisit) {
-          console.log('🚀 New session detected, incrementing counter...');
+          // This is a new session, increment the global counter
+          console.log('🚀 New visit detected - incrementing counter...');
           
-          // Try multiple CountAPI endpoints for reliability
-          const endpoints = [
-            `https://api.countapi.xyz/hit/${namespace}/${key}`,
-            `https://api.countapi.dev/hit/${namespace}/${key}`,
-            `https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=1`
-          ];
-          
-          let success = false;
-          let newVisits = 0;
-          
-          for (const endpoint of endpoints) {
-            try {
-              console.log('🔄 Trying endpoint:', endpoint);
-              const response = await fetch(endpoint, {
-                method: 'GET',
-                headers: {
-                  'Accept': 'application/json',
-                }
-              });
-              
-              if (response.ok) {
-                const data = await response.json();
-                console.log('📊 API Response:', data);
-                
-                if (typeof data.value === 'number') {
-                  newVisits = data.value;
-                  success = true;
-                  console.log('✅ Success! New count:', newVisits);
-                  break;
-                }
-              }
-            } catch (err) {
-              console.log('❌ Endpoint failed:', endpoint, err);
-              continue;
+          const response = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
             }
-          }
+          });
           
-          if (success) {
+          if (response.ok) {
+            const data = await response.json();
+            const newVisits = data.value;
+            
             // Mark this session as tracked
             sessionStorage.setItem(sessionKey, 'true');
             
@@ -76,14 +48,14 @@ const Footer = () => {
             // Reset animation after 3 seconds
             setTimeout(() => setJustIncremented(false), 3000);
             
-            console.log('🎉 Visit counter updated! Total views:', newVisits);
+            console.log('🎉 Visit incremented! Total views:', newVisits);
           } else {
-            throw new Error('All CountAPI endpoints failed');
+            throw new Error('CountAPI failed');
           }
         } else {
-          console.log('📖 Session already tracked, fetching current count...');
+          // Session already tracked, just get current count
+          console.log('📖 Session already tracked - fetching current count...');
           
-          // Get current count without incrementing
           const response = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
           if (response.ok) {
             const data = await response.json();
@@ -117,7 +89,7 @@ const Footer = () => {
     };
 
     // Small delay to ensure component is fully loaded
-    const timer = setTimeout(trackVisit, 200);
+    const timer = setTimeout(trackVisit, 100);
     
     return () => clearTimeout(timer);
   }, []);
@@ -269,31 +241,6 @@ const Footer = () => {
             >
               {visitsLoading ? 'Visits: ...' : `Visits: ${visits ?? '0'}`}
               {justIncremented && ' 🎉'}
-            </button>
-            <button
-              onClick={async () => {
-                console.log('🔄 Manually refreshing visit count...');
-                setVisitsLoading(true);
-                
-                try {
-                  const response = await fetch('https://api.countapi.xyz/get/yuvaraj-portfolio-global/total-visits');
-                  if (response.ok) {
-                    const data = await response.json();
-                    setVisits(data.value || 0);
-                    console.log('📊 Refreshed count:', data.value);
-                  } else {
-                    console.log('❌ Failed to refresh count');
-                  }
-                } catch (error) {
-                  console.log('❌ Refresh failed:', error);
-                }
-                
-                setVisitsLoading(false);
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 font-medium text-sm"
-              title="Refresh visit count"
-            >
-              Refresh
             </button>
           </div>
         </motion.div>
