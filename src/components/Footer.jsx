@@ -13,33 +13,105 @@ const Footer = () => {
   const [visitsLoading, setVisitsLoading] = useState(true);
 
   useEffect(() => {
-    // Increment and fetch visit count with fallback providers
-    const namespace = 'yuvaraj-portfolio';
-    const key = 'site-visits-total';
+    const trackVisit = async () => {
+      const namespace = 'yuvaraj-portfolio';
+      const key = 'site-visits-total';
+      const sessionKey = 'portfolio-visit-tracked';
+      
+      // Check if this session has already been tracked
+      const hasTrackedVisit = sessionStorage.getItem(sessionKey);
+      
+      // If not tracked in this session, increment the counter
+      if (!hasTrackedVisit) {
+        const providers = [
+          // Primary: official CountAPI (.xyz)
+          `https://api.countapi.xyz/hit/${namespace}/${key}`,
+          // Fallback: alternative domain (.dev)
+          `https://api.countapi.dev/hit/${namespace}/${key}`,
+          // Additional fallback: get endpoint
+          `https://api.countapi.xyz/get/${namespace}/${key}`
+        ];
 
-    const providers = [
-      // Primary: official CountAPI (.xyz)
-      `https://api.countapi.xyz/hit/${namespace}/${key}`,
-      // Fallback: alternative domain (.dev)
-      `https://api.countapi.dev/hit/${namespace}/${key}`
-    ];
-
-    (async () => {
-      for (const url of providers) {
-        try {
-          const response = await fetch(url);
-          if (!response.ok) continue;
-          const data = await response.json();
-          if (typeof data?.value === 'number') {
-            setVisits(data.value);
-            break;
+        let success = false;
+        
+        // Try to increment counter
+        for (const url of providers.slice(0, 2)) {
+          try {
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/json',
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (typeof data?.value === 'number') {
+                setVisits(data.value);
+                sessionStorage.setItem(sessionKey, 'true');
+                success = true;
+                break;
+              }
+            }
+          } catch (error) {
+            console.log('CountAPI provider failed:', url);
+            continue;
           }
-        } catch (_) {
-          // try next provider
+        }
+        
+        // If increment failed, try to get current count
+        if (!success) {
+          try {
+            const response = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
+            if (response.ok) {
+              const data = await response.json();
+              if (typeof data?.value === 'number') {
+                setVisits(data.value);
+                sessionStorage.setItem(sessionKey, 'true');
+                success = true;
+              }
+            }
+          } catch (error) {
+            console.log('Failed to get visit count');
+          }
+        }
+        
+        // If all APIs fail, use localStorage as fallback
+        if (!success) {
+          const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0') + 1;
+          localStorage.setItem('portfolio-visits', localVisits.toString());
+          setVisits(localVisits);
+          sessionStorage.setItem(sessionKey, 'true');
+        }
+      } else {
+        // Session already tracked, just fetch current count
+        try {
+          const response = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (typeof data?.value === 'number') {
+              setVisits(data.value);
+            } else {
+              // Fallback to localStorage
+              const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
+              setVisits(localVisits);
+            }
+          } else {
+            // Fallback to localStorage
+            const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
+            setVisits(localVisits);
+          }
+        } catch (error) {
+          // Fallback to localStorage
+          const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
+          setVisits(localVisits);
         }
       }
+      
       setVisitsLoading(false);
-    })();
+    };
+
+    trackVisit();
   }, []);
 
   const socialLinks = [
