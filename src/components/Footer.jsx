@@ -11,7 +11,6 @@ const Footer = () => {
   // Visit counter state
   const [visits, setVisits] = useState(null);
   const [visitsLoading, setVisitsLoading] = useState(true);
-  const [justIncremented, setJustIncremented] = useState(false);
 
   useEffect(() => {
     const trackVisit = async () => {
@@ -41,12 +40,8 @@ const Footer = () => {
             // Mark this session as tracked
             sessionStorage.setItem(sessionKey, 'true');
             
-            // Update state with animation
+            // Update state
             setVisits(newVisits);
-            setJustIncremented(true);
-            
-            // Reset animation after 3 seconds
-            setTimeout(() => setJustIncremented(false), 3000);
             
             console.log('🎉 Visit incremented! Total views:', newVisits);
           } else {
@@ -76,8 +71,6 @@ const Footer = () => {
           localStorage.setItem('portfolio-visits', newVisits.toString());
           sessionStorage.setItem(sessionKey, 'true');
           setVisits(newVisits);
-          setJustIncremented(true);
-          setTimeout(() => setJustIncremented(false), 3000);
           console.log('💾 Local fallback - New count:', newVisits);
         } else {
           setVisits(localVisits);
@@ -232,15 +225,10 @@ const Footer = () => {
               Back to Top
             </button>
             <button
-              className={`${
-                justIncremented 
-                  ? 'bg-green-600 hover:bg-green-700 animate-pulse' 
-                  : 'bg-gray-800 hover:bg-gray-700'
-              } text-white px-6 py-3 rounded-lg transition-all duration-300 font-medium`}
+              className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors duration-300 font-medium"
               title="Total site visits"
             >
               {visitsLoading ? 'Visits: ...' : `Visits: ${visits ?? '0'}`}
-              {justIncremented && ' 🎉'}
             </button>
           </div>
         </motion.div>
