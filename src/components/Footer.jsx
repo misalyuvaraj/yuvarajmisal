@@ -11,107 +11,50 @@ const Footer = () => {
   // Visit counter state
   const [visits, setVisits] = useState(null);
   const [visitsLoading, setVisitsLoading] = useState(true);
+  const [justIncremented, setJustIncremented] = useState(false);
 
   useEffect(() => {
-    const trackVisit = async () => {
-      const namespace = 'yuvaraj-portfolio';
-      const key = 'site-visits-total';
+    const trackVisit = () => {
       const sessionKey = 'portfolio-visit-tracked';
+      const visitKey = 'portfolio-visits';
       
       // Check if this session has already been tracked
       const hasTrackedVisit = sessionStorage.getItem(sessionKey);
       
-      // If not tracked in this session, increment the counter
       if (!hasTrackedVisit) {
-        const providers = [
-          // Primary: official CountAPI (.xyz)
-          `https://api.countapi.xyz/hit/${namespace}/${key}`,
-          // Fallback: alternative domain (.dev)
-          `https://api.countapi.dev/hit/${namespace}/${key}`,
-          // Additional fallback: get endpoint
-          `https://api.countapi.xyz/get/${namespace}/${key}`
-        ];
-
-        let success = false;
+        // This is a new session, increment the counter
+        const currentVisits = parseInt(localStorage.getItem(visitKey) || '0');
+        const newVisits = currentVisits + 1;
         
-        // Try to increment counter
-        for (const url of providers.slice(0, 2)) {
-          try {
-            const response = await fetch(url, {
-              method: 'GET',
-              headers: {
-                'Accept': 'application/json',
-              }
-            });
-            
-            if (response.ok) {
-              const data = await response.json();
-              if (typeof data?.value === 'number') {
-                setVisits(data.value);
-                sessionStorage.setItem(sessionKey, 'true');
-                success = true;
-                break;
-              }
-            }
-          } catch (error) {
-            console.log('CountAPI provider failed:', url);
-            continue;
-          }
-        }
+        // Update localStorage with new count
+        localStorage.setItem(visitKey, newVisits.toString());
         
-        // If increment failed, try to get current count
-        if (!success) {
-          try {
-            const response = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
-            if (response.ok) {
-              const data = await response.json();
-              if (typeof data?.value === 'number') {
-                setVisits(data.value);
-                sessionStorage.setItem(sessionKey, 'true');
-                success = true;
-              }
-            }
-          } catch (error) {
-            console.log('Failed to get visit count');
-          }
-        }
+        // Mark this session as tracked
+        sessionStorage.setItem(sessionKey, 'true');
         
-        // If all APIs fail, use localStorage as fallback
-        if (!success) {
-          const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0') + 1;
-          localStorage.setItem('portfolio-visits', localVisits.toString());
-          setVisits(localVisits);
-          sessionStorage.setItem(sessionKey, 'true');
-        }
+        // Update state with animation
+        setVisits(newVisits);
+        setJustIncremented(true);
+        
+        // Reset animation after 2 seconds
+        setTimeout(() => setJustIncremented(false), 2000);
+        
+        console.log('🎉 Visit incremented! New count:', newVisits);
+        console.log('📊 Total visits stored:', localStorage.getItem(visitKey));
       } else {
-        // Session already tracked, just fetch current count
-        try {
-          const response = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
-          if (response.ok) {
-            const data = await response.json();
-            if (typeof data?.value === 'number') {
-              setVisits(data.value);
-            } else {
-              // Fallback to localStorage
-              const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
-              setVisits(localVisits);
-            }
-          } else {
-            // Fallback to localStorage
-            const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
-            setVisits(localVisits);
-          }
-        } catch (error) {
-          // Fallback to localStorage
-          const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
-          setVisits(localVisits);
-        }
+        // Session already tracked, just get current count
+        const currentVisits = parseInt(localStorage.getItem(visitKey) || '0');
+        setVisits(currentVisits);
+        console.log('✅ Session already tracked. Current count:', currentVisits);
       }
       
       setVisitsLoading(false);
     };
 
-    trackVisit();
+    // Small delay to ensure component is fully loaded
+    const timer = setTimeout(trackVisit, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   const socialLinks = [
@@ -252,10 +195,43 @@ const Footer = () => {
               Back to Top
             </button>
             <button
-              className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors duration-300 font-medium"
+              className={`${
+                justIncremented 
+                  ? 'bg-green-600 hover:bg-green-700 animate-pulse' 
+                  : 'bg-gray-800 hover:bg-gray-700'
+              } text-white px-6 py-3 rounded-lg transition-all duration-300 font-medium`}
               title="Total site visits"
             >
               {visitsLoading ? 'Visits: ...' : `Visits: ${visits ?? '0'}`}
+              {justIncremented && ' 🎉'}
+            </button>
+            <button
+              onClick={() => {
+                // Simulate a new visit
+                const currentVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
+                const newVisits = currentVisits + 1;
+                localStorage.setItem('portfolio-visits', newVisits.toString());
+                setVisits(newVisits);
+                setJustIncremented(true);
+                setTimeout(() => setJustIncremented(false), 2000);
+                console.log('🧪 Manual increment! New count:', newVisits);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 font-medium text-sm"
+              title="Test increment (for testing)"
+            >
+              Test +1
+            </button>
+            <button
+              onClick={() => {
+                localStorage.removeItem('portfolio-visits');
+                sessionStorage.removeItem('portfolio-visit-tracked');
+                setVisits(0);
+                console.log('Visit counter reset!');
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 font-medium text-sm"
+              title="Reset visit counter (for testing)"
+            >
+              Reset
             </button>
           </div>
         </motion.div>
