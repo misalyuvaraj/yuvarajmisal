@@ -16,19 +16,56 @@ const Footer = () => {
   useEffect(() => {
     const trackVisit = async () => {
       const sessionKey = 'portfolio-visit-tracked';
+      const namespace = 'yuvaraj-portfolio-global';
+      const key = 'total-visits';
       
       // Check if this session has already been tracked
       const hasTrackedVisit = sessionStorage.getItem(sessionKey);
       
+      console.log('🔍 Session tracked?', hasTrackedVisit);
+      
       try {
         if (!hasTrackedVisit) {
-          // This is a new session, increment the global counter using CountAPI
-          const response = await fetch('https://api.countapi.xyz/hit/yuvaraj-portfolio/global-visits');
+          console.log('🚀 New session detected, incrementing counter...');
           
-          if (response.ok) {
-            const data = await response.json();
-            const newVisits = data.value;
-            
+          // Try multiple CountAPI endpoints for reliability
+          const endpoints = [
+            `https://api.countapi.xyz/hit/${namespace}/${key}`,
+            `https://api.countapi.dev/hit/${namespace}/${key}`,
+            `https://api.countapi.xyz/create?namespace=${namespace}&key=${key}&value=1`
+          ];
+          
+          let success = false;
+          let newVisits = 0;
+          
+          for (const endpoint of endpoints) {
+            try {
+              console.log('🔄 Trying endpoint:', endpoint);
+              const response = await fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                  'Accept': 'application/json',
+                }
+              });
+              
+              if (response.ok) {
+                const data = await response.json();
+                console.log('📊 API Response:', data);
+                
+                if (typeof data.value === 'number') {
+                  newVisits = data.value;
+                  success = true;
+                  console.log('✅ Success! New count:', newVisits);
+                  break;
+                }
+              }
+            } catch (err) {
+              console.log('❌ Endpoint failed:', endpoint, err);
+              continue;
+            }
+          }
+          
+          if (success) {
             // Mark this session as tracked
             sessionStorage.setItem(sessionKey, 'true');
             
@@ -36,26 +73,30 @@ const Footer = () => {
             setVisits(newVisits);
             setJustIncremented(true);
             
-            // Reset animation after 2 seconds
-            setTimeout(() => setJustIncremented(false), 2000);
+            // Reset animation after 3 seconds
+            setTimeout(() => setJustIncremented(false), 3000);
             
-            console.log('🎉 Global visit incremented! New count:', newVisits);
+            console.log('🎉 Visit counter updated! Total views:', newVisits);
           } else {
-            throw new Error('CountAPI failed');
+            throw new Error('All CountAPI endpoints failed');
           }
         } else {
-          // Session already tracked, just get current count
-          const response = await fetch('https://api.countapi.xyz/get/yuvaraj-portfolio/global-visits');
+          console.log('📖 Session already tracked, fetching current count...');
+          
+          // Get current count without incrementing
+          const response = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
           if (response.ok) {
             const data = await response.json();
-            setVisits(data.value);
-            console.log('✅ Session already tracked. Current count:', data.value);
+            const currentVisits = data.value || 0;
+            setVisits(currentVisits);
+            console.log('📊 Current total views:', currentVisits);
           } else {
             throw new Error('Failed to get current count');
           }
         }
       } catch (error) {
         console.log('❌ Global counter failed, using local fallback:', error);
+        
         // Fallback to local storage
         const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
         if (!hasTrackedVisit) {
@@ -64,9 +105,11 @@ const Footer = () => {
           sessionStorage.setItem(sessionKey, 'true');
           setVisits(newVisits);
           setJustIncremented(true);
-          setTimeout(() => setJustIncremented(false), 2000);
+          setTimeout(() => setJustIncremented(false), 3000);
+          console.log('💾 Local fallback - New count:', newVisits);
         } else {
           setVisits(localVisits);
+          console.log('💾 Local fallback - Current count:', localVisits);
         }
       }
       
@@ -74,7 +117,7 @@ const Footer = () => {
     };
 
     // Small delay to ensure component is fully loaded
-    const timer = setTimeout(trackVisit, 100);
+    const timer = setTimeout(trackVisit, 200);
     
     return () => clearTimeout(timer);
   }, []);
@@ -226,6 +269,31 @@ const Footer = () => {
             >
               {visitsLoading ? 'Visits: ...' : `Visits: ${visits ?? '0'}`}
               {justIncremented && ' 🎉'}
+            </button>
+            <button
+              onClick={async () => {
+                console.log('🔄 Manually refreshing visit count...');
+                setVisitsLoading(true);
+                
+                try {
+                  const response = await fetch('https://api.countapi.xyz/get/yuvaraj-portfolio-global/total-visits');
+                  if (response.ok) {
+                    const data = await response.json();
+                    setVisits(data.value || 0);
+                    console.log('📊 Refreshed count:', data.value);
+                  } else {
+                    console.log('❌ Failed to refresh count');
+                  }
+                } catch (error) {
+                  console.log('❌ Refresh failed:', error);
+                }
+                
+                setVisitsLoading(false);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 font-medium text-sm"
+              title="Refresh visit count"
+            >
+              Refresh
             </button>
           </div>
         </motion.div>
