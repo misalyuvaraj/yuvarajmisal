@@ -14,15 +14,29 @@ const Footer = () => {
 
   useEffect(() => {
     const trackVisit = async () => {
-      // Use a single counter for all devices
-      const namespace = 'yuvaraj-misal-portfolio';
-      const key = 'total-visits';
+      // Use a single, unique counter for ALL browsers and devices
+      const namespace = 'yuvaraj-misal-global';
+      const key = 'visits';
       const sessionKey = 'portfolio-visit-tracked';
       
       // Check if this session has already been tracked
       const hasTrackedVisit = sessionStorage.getItem(sessionKey);
       
+      console.log('🌐 Browser:', navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop');
+      console.log('🔍 Session tracked?', hasTrackedVisit);
+      console.log('🌐 Counter URL:', `https://api.countapi.xyz/get/${namespace}/${key}`);
+      
       try {
+        // Always fetch current count first to ensure sync
+        const getCurrentCount = async () => {
+          const response = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
+          if (response.ok) {
+            const data = await response.json();
+            return Math.max(data.value || 0, 10); // Minimum 10
+          }
+          return 10;
+        };
+        
         if (!hasTrackedVisit) {
           // This is a new session, increment the global counter
           console.log('🚀 New visit detected - incrementing counter...');
@@ -36,12 +50,7 @@ const Footer = () => {
           
           if (response.ok) {
             const data = await response.json();
-            let newVisits = data.value;
-            
-            // If counter is less than 10, set it to 10
-            if (newVisits < 10) {
-              newVisits = 10;
-            }
+            const newVisits = Math.max(data.value || 0, 10);
             
             // Mark this session as tracked
             sessionStorage.setItem(sessionKey, 'true');
@@ -51,27 +60,20 @@ const Footer = () => {
             
             console.log('🎉 Visit incremented! Total views:', newVisits);
           } else {
-            throw new Error('CountAPI failed');
+            // If hit fails, try to get current count and add 1
+            const currentCount = await getCurrentCount();
+            const newVisits = currentCount + 1;
+            sessionStorage.setItem(sessionKey, 'true');
+            setVisits(newVisits);
+            console.log('🎉 Visit incremented (fallback)! Total views:', newVisits);
           }
         } else {
           // Session already tracked, just get current count
           console.log('📖 Session already tracked - fetching current count...');
           
-          const response = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
-          if (response.ok) {
-            const data = await response.json();
-            let currentVisits = data.value || 0;
-            
-            // If counter is less than 10, set it to 10
-            if (currentVisits < 10) {
-              currentVisits = 10;
-            }
-            
-            setVisits(currentVisits);
-            console.log('📊 Current total views:', currentVisits);
-          } else {
-            throw new Error('Failed to get current count');
-          }
+          const currentVisits = await getCurrentCount();
+          setVisits(currentVisits);
+          console.log('📊 Current total views:', currentVisits);
         }
       } catch (error) {
         console.log('❌ Global counter failed, using local fallback:', error);
