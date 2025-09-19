@@ -14,17 +14,13 @@ const Footer = () => {
 
   useEffect(() => {
     const trackVisit = async () => {
-      // Use a completely fresh, unique counter for all devices
-      const namespace = 'yuvaraj-misal-2024';
-      const key = 'portfolio-visits';
+      // Use a single counter for all devices
+      const namespace = 'yuvaraj-misal-portfolio';
+      const key = 'total-visits';
       const sessionKey = 'portfolio-visit-tracked';
       
       // Check if this session has already been tracked
       const hasTrackedVisit = sessionStorage.getItem(sessionKey);
-      
-      console.log('🔍 Device type:', /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'Mobile' : 'Desktop');
-      console.log('🔍 Session tracked?', hasTrackedVisit);
-      console.log('🌐 Using counter:', `${namespace}/${key}`);
       
       try {
         if (!hasTrackedVisit) {
@@ -40,7 +36,12 @@ const Footer = () => {
           
           if (response.ok) {
             const data = await response.json();
-            const newVisits = data.value;
+            let newVisits = data.value;
+            
+            // If counter is less than 10, set it to 10
+            if (newVisits < 10) {
+              newVisits = 10;
+            }
             
             // Mark this session as tracked
             sessionStorage.setItem(sessionKey, 'true');
@@ -49,7 +50,6 @@ const Footer = () => {
             setVisits(newVisits);
             
             console.log('🎉 Visit incremented! Total views:', newVisits);
-            console.log('🌐 Counter URL:', `https://api.countapi.xyz/get/${namespace}/${key}`);
           } else {
             throw new Error('CountAPI failed');
           }
@@ -60,10 +60,15 @@ const Footer = () => {
           const response = await fetch(`https://api.countapi.xyz/get/${namespace}/${key}`);
           if (response.ok) {
             const data = await response.json();
-            const currentVisits = data.value || 0;
+            let currentVisits = data.value || 0;
+            
+            // If counter is less than 10, set it to 10
+            if (currentVisits < 10) {
+              currentVisits = 10;
+            }
+            
             setVisits(currentVisits);
             console.log('📊 Current total views:', currentVisits);
-            console.log('🌐 Counter URL:', `https://api.countapi.xyz/get/${namespace}/${key}`);
           } else {
             throw new Error('Failed to get current count');
           }
@@ -72,7 +77,7 @@ const Footer = () => {
         console.log('❌ Global counter failed, using local fallback:', error);
         
         // Fallback to local storage
-        const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
+        const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '10');
         if (!hasTrackedVisit) {
           const newVisits = localVisits + 1;
           localStorage.setItem('portfolio-visits', newVisits.toString());
@@ -236,19 +241,6 @@ const Footer = () => {
               title="Total site visits"
             >
               {visitsLoading ? 'Visits: ...' : `Visits: ${visits ?? '0'}`}
-            </button>
-            <button
-              onClick={() => {
-                // Clear session to test counter
-                sessionStorage.removeItem('portfolio-visit-tracked');
-                localStorage.removeItem('portfolio-visits');
-                console.log('🔄 Session cleared - next visit will increment counter');
-                alert('Session cleared! Next visit will increment counter.');
-              }}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 font-medium text-sm"
-              title="Clear session for testing"
-            >
-              Test
             </button>
           </div>
         </motion.div>
