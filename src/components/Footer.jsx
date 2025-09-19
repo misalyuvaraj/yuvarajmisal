@@ -14,38 +14,60 @@ const Footer = () => {
   const [justIncremented, setJustIncremented] = useState(false);
 
   useEffect(() => {
-    const trackVisit = () => {
+    const trackVisit = async () => {
       const sessionKey = 'portfolio-visit-tracked';
-      const visitKey = 'portfolio-visits';
       
       // Check if this session has already been tracked
       const hasTrackedVisit = sessionStorage.getItem(sessionKey);
       
-      if (!hasTrackedVisit) {
-        // This is a new session, increment the counter
-        const currentVisits = parseInt(localStorage.getItem(visitKey) || '0');
-        const newVisits = currentVisits + 1;
-        
-        // Update localStorage with new count
-        localStorage.setItem(visitKey, newVisits.toString());
-        
-        // Mark this session as tracked
-        sessionStorage.setItem(sessionKey, 'true');
-        
-        // Update state with animation
-        setVisits(newVisits);
-        setJustIncremented(true);
-        
-        // Reset animation after 2 seconds
-        setTimeout(() => setJustIncremented(false), 2000);
-        
-        console.log('🎉 Visit incremented! New count:', newVisits);
-        console.log('📊 Total visits stored:', localStorage.getItem(visitKey));
-      } else {
-        // Session already tracked, just get current count
-        const currentVisits = parseInt(localStorage.getItem(visitKey) || '0');
-        setVisits(currentVisits);
-        console.log('✅ Session already tracked. Current count:', currentVisits);
+      try {
+        if (!hasTrackedVisit) {
+          // This is a new session, increment the global counter using CountAPI
+          const response = await fetch('https://api.countapi.xyz/hit/yuvaraj-portfolio/global-visits');
+          
+          if (response.ok) {
+            const data = await response.json();
+            const newVisits = data.value;
+            
+            // Mark this session as tracked
+            sessionStorage.setItem(sessionKey, 'true');
+            
+            // Update state with animation
+            setVisits(newVisits);
+            setJustIncremented(true);
+            
+            // Reset animation after 2 seconds
+            setTimeout(() => setJustIncremented(false), 2000);
+            
+            console.log('🎉 Global visit incremented! New count:', newVisits);
+          } else {
+            throw new Error('CountAPI failed');
+          }
+        } else {
+          // Session already tracked, just get current count
+          const response = await fetch('https://api.countapi.xyz/get/yuvaraj-portfolio/global-visits');
+          if (response.ok) {
+            const data = await response.json();
+            setVisits(data.value);
+            console.log('✅ Session already tracked. Current count:', data.value);
+          } else {
+            throw new Error('Failed to get current count');
+          }
+        }
+      } catch (error) {
+        console.log('❌ Global counter failed, using local fallback:', error);
+        // Fallback to local storage
+        const localVisits = parseInt(localStorage.getItem('portfolio-visits') || '0');
+        if (!hasTrackedVisit) {
+          const newVisits = localVisits + 1;
+          localStorage.setItem('portfolio-visits', newVisits.toString());
+          sessionStorage.setItem(sessionKey, 'true');
+          setVisits(newVisits);
+          setJustIncremented(true);
+          setTimeout(() => setJustIncremented(false), 2000);
+        } else {
+          setVisits(localVisits);
+        }
       }
       
       setVisitsLoading(false);
