@@ -15,8 +15,9 @@ const Footer = () => {
   useEffect(() => {
     const trackVisit = async () => {
       const sessionKey = 'portfolio-visit-tracked';
-      const namespace = 'yuvaraj-portfolio';
-      const key = 'global-visits';
+      // Use a single, fixed namespace and key for all devices
+      const namespace = 'yuvaraj-misal-portfolio';
+      const key = 'total-visits';
       
       // Check if this session has already been tracked
       const hasTrackedVisit = sessionStorage.getItem(sessionKey);
@@ -44,6 +45,7 @@ const Footer = () => {
             setVisits(newVisits);
             
             console.log('🎉 Visit incremented! Total views:', newVisits);
+            console.log('🌐 Counter URL:', `https://api.countapi.xyz/get/${namespace}/${key}`);
           } else {
             throw new Error('CountAPI failed');
           }
@@ -57,6 +59,7 @@ const Footer = () => {
             const currentVisits = data.value || 0;
             setVisits(currentVisits);
             console.log('📊 Current total views:', currentVisits);
+            console.log('🌐 Counter URL:', `https://api.countapi.xyz/get/${namespace}/${key}`);
           } else {
             throw new Error('Failed to get current count');
           }
